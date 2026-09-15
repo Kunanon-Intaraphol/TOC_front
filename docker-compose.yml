@@ -1,0 +1,19 @@
+# Standalone frontend dev only.
+# Production is built by the outer compose (frontend + backend)
+services:
+  frontend:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount local code into the container so edits apply instantly
+      - .:/app
+      # Keep the host's node_modules (macOS/Windows) from shadowing the container's
+      - /app/node_modules
+    environment:
+      # Force Vite to poll: fs events do not cross bind mounts on macOS/Windows
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true
