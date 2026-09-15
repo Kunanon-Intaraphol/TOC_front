@@ -61,9 +61,20 @@ Build targets in `Dockerfile`:
 `build` is an intermediate stage — it has no `CMD` of its own, so don't point a compose service at it
 directly or the container will exit immediately. Use it only as the source of a `COPY --from=build`.
 
-`nginx.conf` handles the three things a SPA needs in production: a `try_files` fallback so client-side
-routes don't 404 on refresh, immutable caching for the content-hashed files under `/assets/`, and
-`no-cache` on `index.html` so clients don't pin themselves to an old bundle.
+`nginx.conf` handles the four things a SPA needs in production: a `try_files` fallback so client-side
+routes don't 404 on refresh, immutable caching for the content-hashed files under `/assets/`,
+`no-cache` on `index.html` so clients don't pin themselves to an old bundle, and a `/api/` proxy
+to the backend.
+
+That proxy is what keeps production same-origin — the browser only ever talks to this nginx, which
+forwards `/api/` to `http://backend:8000` over the compose network, so CORS never comes up. It
+resolves the hostname per request through Docker's embedded DNS, which means **the backend service
+must be named `backend` in the outer compose**, and also that this image still starts fine on its
+own with no backend around (`/api/` just returns 502 instead of nginx refusing to boot).
+
+In dev this proxy isn't involved at all: the Vite dev server serves the app on `:5173` and the
+browser calls the backend's own port directly, which is cross-origin and relies on the backend's
+CORS settings.
 
 This still works behind an outer reverse proxy (Traefik, Caddy, another nginx) — point the proxy at
 this service's port 80. If you'd rather not run nginx here at all, the alternative is to have the
