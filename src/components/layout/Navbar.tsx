@@ -1,26 +1,38 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 
+export type PageId = 'playground' | 'how-it-works' | 'about';
+
 type NavbarProps = {
 	theme: 'light' | 'dark';
 	onThemeToggle: () => void;
+	activePage: PageId;
+	onNavigate: (page: PageId) => void;
 };
 
-const NAV_LINKS = ['Overview', 'Docs', 'Components', 'Changelog'];
+const NAV_PAGES: { id: PageId; label: string }[] = [
+	{ id: 'playground', label: 'Playground' },
+	{ id: 'how-it-works', label: "How it's works" },
+	{ id: 'about', label: 'About us' },
+];
 
-export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
-	const [active, setActive] = useState(NAV_LINKS[0]);
+export default function Navbar({
+	theme,
+	onThemeToggle,
+	activePage,
+	onNavigate,
+}: NavbarProps) {
 	const [pill, setPill] = useState({ left: 0, width: 0 });
 	const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
 	useLayoutEffect(() => {
 		const update = () => {
-			const el = itemRefs.current[active];
+			const el = itemRefs.current[activePage];
 			if (el) setPill({ left: el.offsetLeft, width: el.offsetWidth });
 		};
 		update();
 		window.addEventListener('resize', update);
 		return () => window.removeEventListener('resize', update);
-	}, [active]);
+	}, [activePage]);
 
 	return (
 		<header className='sticky top-0 z-(--z-nav) flex justify-center bg-transparent px-4 pt-4'>
@@ -35,16 +47,16 @@ export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
 					className='pointer-events-none absolute top-1.5 bottom-1.5 rounded-full bg-primary-bg transition-all duration-300'
 				/>
 
-				{NAV_LINKS.map((label) => {
-					const isActive = active === label;
+				{NAV_PAGES.map((page) => {
+					const isActive = activePage === page.id;
 					return (
 						<button
-							key={label}
+							key={page.id}
 							ref={(el) => {
-								itemRefs.current[label] = el;
+								itemRefs.current[page.id] = el;
 							}}
 							type='button'
-							onClick={() => setActive(label)}
+							onClick={() => onNavigate(page.id)}
 							aria-current={isActive ? 'page' : undefined}
 							className={`relative z-10 rounded-full px-4 py-2 text-sm whitespace-nowrap transition-colors duration-200 ${
 								isActive
@@ -52,7 +64,7 @@ export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
 									: 'text-muted hover:text-foreground'
 							}`}
 						>
-							{label}
+							{page.label}
 						</button>
 					);
 				})}

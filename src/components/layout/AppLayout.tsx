@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import Content from './Content';
-import Navbar from './Navbar';
+import Navbar, { type PageId } from './Navbar';
+
+export type { PageId };
 
 type Theme = 'light' | 'dark';
 
@@ -15,8 +17,12 @@ function getInitialTheme(): Theme {
 
 export default function AppLayout({
 	children,
+	activePage,
+	onNavigate,
 }: {
 	children?: React.ReactNode;
+	activePage: PageId;
+	onNavigate: (page: PageId) => void;
 }) {
 	const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
@@ -32,7 +38,12 @@ export default function AppLayout({
 
 	return (
 		<div className='app-shell flex min-h-svh flex-col'>
-			<Navbar theme={theme} onThemeToggle={toggleTheme} />
+			<Navbar
+				theme={theme}
+				onThemeToggle={toggleTheme}
+				activePage={activePage}
+				onNavigate={onNavigate}
+			/>
 			<div className='mx-auto flex w-full max-w-7xl flex-1'>
 				<Content>{children}</Content>
 			</div>
