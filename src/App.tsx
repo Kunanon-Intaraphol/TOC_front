@@ -1,19 +1,33 @@
 import './App.css';
-import { useState } from 'react';
-import AppLayout, { type PageId } from './components/layout/AppLayout';
+import { useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router';
+import AppLayout from './components/layout/AppLayout';
 import About from './components/pages/About';
 import HowItWorks from './components/pages/HowItWorks';
 import Playground from './components/pages/Playground';
 
-function App() {
-	const [page, setPage] = useState<PageId>('playground');
+function ScrollToTop() {
+	const { pathname, hash } = useLocation();
 
+	useEffect(() => {
+		if (!hash) window.scrollTo(0, 0);
+	}, [pathname, hash]);
+
+	return null;
+}
+
+function App() {
 	return (
 		<div className='theme-bg'>
-			<AppLayout activePage={page} onNavigate={setPage}>
-				{page === 'playground' && <Playground />}
-				{page === 'how-it-works' && <HowItWorks />}
-				{page === 'about' && <About />}
+			<AppLayout>
+				<ScrollToTop />
+				<Routes>
+					<Route path='/' element={<Navigate to='/playground' replace />} />
+					<Route path='/playground' element={<Playground />} />
+					<Route path='/how-it-works' element={<HowItWorks />} />
+					<Route path='/about' element={<About />} />
+					<Route path='*' element={<Navigate to='/playground' replace />} />
+				</Routes>
 			</AppLayout>
 		</div>
 	);

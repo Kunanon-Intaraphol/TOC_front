@@ -1,26 +1,27 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
-export type PageId = 'playground' | 'how-it-works' | 'about';
+const NAV_PAGES = [
+	{ id: 'playground', label: 'Playground', path: '/playground' },
+	{ id: 'how-it-works', label: "How it's works", path: '/how-it-works' },
+	{ id: 'about', label: 'About us', path: '/about' },
+] as const;
+
+export type PageId = (typeof NAV_PAGES)[number]['id'];
+
+function pageFromPath(pathname: string): PageId {
+	return NAV_PAGES.find((page) => page.path === pathname)?.id ?? 'playground';
+}
 
 type NavbarProps = {
 	theme: 'light' | 'dark';
 	onThemeToggle: () => void;
-	activePage: PageId;
-	onNavigate: (page: PageId) => void;
 };
 
-const NAV_PAGES: { id: PageId; label: string }[] = [
-	{ id: 'playground', label: 'Playground' },
-	{ id: 'how-it-works', label: "How it's works" },
-	{ id: 'about', label: 'About us' },
-];
-
-export default function Navbar({
-	theme,
-	onThemeToggle,
-	activePage,
-	onNavigate,
-}: NavbarProps) {
+export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
+	const { pathname } = useLocation();
+	const navigate = useNavigate();
+	const activePage = pageFromPath(pathname);
 	const [pill, setPill] = useState({ left: 0, width: 0 });
 	const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -56,7 +57,7 @@ export default function Navbar({
 								itemRefs.current[page.id] = el;
 							}}
 							type='button'
-							onClick={() => onNavigate(page.id)}
+							onClick={() => navigate(page.path)}
 							aria-current={isActive ? 'page' : undefined}
 							className={`relative z-10 rounded-full px-4 py-2 text-sm whitespace-nowrap transition-colors duration-200 ${
 								isActive
