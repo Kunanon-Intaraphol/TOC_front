@@ -42,21 +42,21 @@ The outer compose only has to point at this directory and run it.
 services:
   frontend:
     build:
-      context: ./frontend      # path to this repo
+      context: ./frontend # path to this repo
       target: prod
     ports:
-      - "8080:80"
+      - '8080:80'
     depends_on:
       - backend
 ```
 
 Build targets in `Dockerfile`:
 
-| Target | What it does |
-| --- | --- |
-| `dev` | Vite dev server with HMR on port 5173 |
+| Target  | What it does                                           |
+| ------- | ------------------------------------------------------ |
+| `dev`   | Vite dev server with HMR on port 5173                  |
 | `build` | runs `npm run build`, leaves the bundle at `/app/dist` |
-| `prod` | nginx serving that bundle on port 80 |
+| `prod`  | nginx serving that bundle on port 80                   |
 
 `build` is an intermediate stage — it has no `CMD` of its own, so don't point a compose service at it
 directly or the container will exit immediately. Use it only as the source of a `COPY --from=build`.
@@ -98,7 +98,6 @@ npm install
 npm run dev
 ```
 
-
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
@@ -116,59 +115,57 @@ If you are developing a production application, we recommend updating the config
 
 ```js
 export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+	globalIgnores(['dist']),
+	{
+		files: ['**/*.{ts,tsx}'],
+		extends: [
+			// Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+			// Remove tseslint.configs.recommended and replace with this
+			tseslint.configs.recommendedTypeChecked,
+			// Alternatively, use this for stricter rules
+			tseslint.configs.strictTypeChecked,
+			// Optionally, add this for stylistic rules
+			tseslint.configs.stylisticTypeChecked,
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+			// Other configs...
+		],
+		languageOptions: {
+			parserOptions: {
+				project: ['./tsconfig.node.json', './tsconfig.app.json'],
+				tsconfigRootDir: import.meta.dirname,
+			},
+			// other options...
+		},
+	},
+]);
 ```
 
 You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
 
 ```js
 // eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+import reactX from 'eslint-plugin-react-x';
+import reactDom from 'eslint-plugin-react-dom';
 
 export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+	globalIgnores(['dist']),
+	{
+		files: ['**/*.{ts,tsx}'],
+		extends: [
+			// Other configs...
+			// Enable lint rules for React
+			reactX.configs['recommended-typescript'],
+			// Enable lint rules for React DOM
+			reactDom.configs.recommended,
+		],
+		languageOptions: {
+			parserOptions: {
+				project: ['./tsconfig.node.json', './tsconfig.app.json'],
+				tsconfigRootDir: import.meta.dirname,
+			},
+			// other options...
+		},
+	},
+]);
 ```

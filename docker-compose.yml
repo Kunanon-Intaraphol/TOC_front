@@ -6,7 +6,7 @@ services:
       context: .
       target: dev
     ports:
-      - "5173:5173"
+      - '5173:5173'
     volumes:
       # Mount local code into the container so edits apply instantly
       - .:/app
