@@ -10,7 +10,7 @@
 	min-height: 0;
 	overflow: hidden;
 	margin: -2rem -1rem -2rem;
-	background: var(--bg);
+	background: transparent;
 	color: var(--text-heading);
 }
 
@@ -27,11 +27,7 @@
 	align-items: flex-end;
 	justify-content: center;
 	min-height: 0;
-	background: linear-gradient(
-		135deg,
-		color-mix(in srgb, var(--primary-bg) 75%, transparent),
-		transparent 60%
-	);
+	background: transparent;
 }
 
 .about-team-mark {
