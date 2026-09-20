@@ -2,3 +2,13 @@
 	background-color: var(--bg);
 	color: var(--text);
 }
+
+.theme-shell {
+	background: var(--bg);
+	color: var(--text);
+}
+
+.page-section {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid var(--border);
+}
