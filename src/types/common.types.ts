@@ -13,3 +13,6 @@ export interface Summary {
 	total: number;
 	by_type: Record<string, number>;
 }
+
+export const matchValueKey = (ruleId: string, rawText: string): string =>
+	`${ruleId}::${rawText}`;

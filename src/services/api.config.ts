@@ -26,7 +26,9 @@ export const apiClient = async <T>(
 
 	if (!response.ok) {
 		const errorData = await response.json().catch(() => ({}));
-		throw new Error(errorData.detail || `API Error: ${response.status}`);
+		throw new Error(
+			errorData.detail || `เกิดข้อผิดพลาด API: ${response.status}`,
+		);
 	}
 
 	return response.json();

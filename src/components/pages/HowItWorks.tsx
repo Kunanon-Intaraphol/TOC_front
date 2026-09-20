@@ -59,7 +59,7 @@ export default function HowItWorks() {
 						d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
 					></path>
 				</svg>
-				<p>Loading rules from server...</p>
+				<p>กำลังโหลดกฎจากเซิร์ฟเวอร์...</p>
 			</div>
 		);
 	}
@@ -68,10 +68,10 @@ export default function HowItWorks() {
 		return (
 			<div className='py-20 text-center'>
 				<div className='inline-block bg-red-50 border border-red-200 text-red-600 p-6 rounded-2xl max-w-lg'>
-					<h3 className='font-bold text-lg mb-2'>Unable to connect to API</h3>
+					<h3 className='font-bold text-lg mb-2'>ไม่สามารถเชื่อมต่อ API ได้</h3>
 					<p className='text-sm'>
 						{(error as Error)?.message ||
-							'Please check if the backend server is running.'}
+							'กรุณาตรวจสอบว่าเซิร์ฟเวอร์หลังบ้านกำลังทำงานอยู่'}
 					</p>
 				</div>
 			</div>
@@ -81,7 +81,7 @@ export default function HowItWorks() {
 	if (!rulesData?.rules || rulesData.rules.length === 0) {
 		return (
 			<div className='py-20 text-center text-muted'>
-				No masking rules found in the system.
+				ไม่พบกฎการเซ็นเซอร์ในระบบ
 			</div>
 		);
 	}
@@ -91,7 +91,7 @@ export default function HowItWorks() {
 			{/* Left sidebar */}
 			<aside className='lg:sticky lg:top-24 lg:self-start'>
 				<nav
-					aria-label='How it works sections'
+					aria-label='ส่วนวิธีการทำงาน'
 					className='flex gap-1 overflow-x-auto lg:flex-col custom-scrollbar'
 				>
 					{rulesData.rules.map((rule) => {
@@ -108,7 +108,7 @@ export default function HowItWorks() {
 										: 'text-muted hover:bg-surface-2 hover:text-foreground'
 								}`}
 							>
-								{rule.label_en}
+								{rule.label_th || rule.label_en}
 							</button>
 						);
 					})}
@@ -121,7 +121,7 @@ export default function HowItWorks() {
 					<>
 						<div className='bg-surface-2 p-6 rounded-3xl border border-border'>
 							<h2 className='text-2xl font-bold text-heading mb-2'>
-								{activeRule.label_en}
+								{activeRule.label_th || activeRule.label_en}
 							</h2>
 							<p className='text-muted mb-6 text-sm'>
 								{activeRule.description}
@@ -130,7 +130,7 @@ export default function HowItWorks() {
 							<div className='grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono'>
 								<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
 									<span className='text-xs text-muted block mb-2 font-sans font-semibold'>
-										📝 Input Example
+										📝 ตัวอย่างข้อมูลเข้า
 									</span>
 									<span className='text-foreground break-all'>
 										{activeRule.example_before}
@@ -138,7 +138,7 @@ export default function HowItWorks() {
 								</div>
 								<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
 									<span className='text-xs text-muted block mb-2 font-sans font-semibold'>
-										🛡️ Output Example
+										🛡️ ตัวอย่างผลลัพธ์
 									</span>
 									<span className='text-heading break-all'>
 										{activeRule.example_after}
@@ -149,7 +149,7 @@ export default function HowItWorks() {
 
 						<div className='bg-background p-6 rounded-3xl border border-border shadow-[0_4px_20px_rgb(0,0,0,0.03)]'>
 							<h3 className='text-lg font-bold text-heading mb-4'>
-								Interactive Testing
+								ทดสอบแบบโต้ตอบ
 							</h3>
 
 							<textarea
@@ -157,7 +157,7 @@ export default function HowItWorks() {
 								onChange={(e) => setCustomInputText(e.target.value)}
 								className='w-full p-4 bg-surface-2 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 mb-4 text-sm font-mono resize-none text-foreground'
 								rows={4}
-								placeholder='Type your text to test...'
+								placeholder='พิมพ์ข้อความเพื่อทดสอบ...'
 							/>
 
 							<button
@@ -165,12 +165,14 @@ export default function HowItWorks() {
 								disabled={maskMutation.isPending || !inputText.trim()}
 								className='w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md disabled:opacity-50 flex justify-center items-center gap-2'
 							>
-								{maskMutation.isPending ? 'Processing...' : 'Detect & Mask'}
+								{maskMutation.isPending
+									? 'กำลังประมวลผล...'
+									: 'ตรวจจับและเซ็นเซอร์'}
 							</button>
 
 							{maskMutation.isError && (
 								<div className='mt-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100'>
-									Error: {(maskMutation.error as Error)?.message}
+									ข้อผิดพลาด: {(maskMutation.error as Error)?.message}
 								</div>
 							)}
 
@@ -193,19 +195,20 @@ export default function HowItWorks() {
 												/>
 											</svg>
 											<div>
-												<p className='font-bold mb-1'>No match found</p>
+												<p className='font-bold mb-1'>ไม่พบข้อมูลที่ตรงกัน</p>
 												<p className='text-red-500/80'>
 													ข้อความที่คุณกรอกไม่ตรงกับรูปแบบของ{' '}
-													{activeRule.label_en} กรุณาตรวจสอบและลองใหม่อีกครั้ง
+													{activeRule.label_th || activeRule.label_en}{' '}
+													กรุณาตรวจสอบและลองใหม่อีกครั้ง
 												</p>
 											</div>
 										</div>
 									) : (
 										<>
 											<div className='text-sm font-semibold text-heading mb-2 flex justify-between items-end'>
-												<span>Result:</span>
+												<span>ผลลัพธ์:</span>
 												<span className='text-xs font-normal text-muted'>
-													Processed in{' '}
+													ประมวลผลใน{' '}
 													{maskMutation.data.processing_time_ms.toFixed(2)} ms
 												</span>
 											</div>

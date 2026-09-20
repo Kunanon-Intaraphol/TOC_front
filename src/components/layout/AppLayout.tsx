@@ -34,7 +34,11 @@ export default function AppLayout({
 	);
 
 	return (
-		<div className='app-shell theme-page flex min-h-svh flex-col'>
+		<div
+			className={`app-shell theme-page flex min-h-svh flex-col ${
+				wide ? 'lg:h-svh lg:overflow-hidden' : ''
+			}`}
+		>
 			<Navbar theme={theme} onThemeToggle={toggleTheme} />
 			<div
 				className={`mx-auto flex min-h-0 w-full flex-1 ${
