@@ -3,6 +3,55 @@ import { useMaskMutation } from '../../services/mask.service';
 import { useRulesQuery } from '../../services/rules.service';
 import type { Rule } from '../../types/rules.types';
 
+function DocIcon({ className = '' }: { className?: string }) {
+	return (
+		<svg
+			viewBox='0 0 20 20'
+			fill='none'
+			aria-hidden='true'
+			className={className}
+		>
+			<path
+				d='M5 2.5h6l4 4v11H5v-15Z'
+				stroke='currentColor'
+				strokeWidth='1.8'
+				strokeLinejoin='round'
+			/>
+			<path
+				d='M11 2.5v4h4M8 10.5h4M8 13.5h4'
+				stroke='currentColor'
+				strokeWidth='1.8'
+				strokeLinecap='round'
+			/>
+		</svg>
+	);
+}
+
+function ShieldIcon({ className = '' }: { className?: string }) {
+	return (
+		<svg
+			viewBox='0 0 20 20'
+			fill='none'
+			aria-hidden='true'
+			className={className}
+		>
+			<path
+				d='M10 2 4.5 4.5v5c0 3.5 2.3 6 5.5 7.5 3.2-1.5 5.5-4 5.5-7.5v-5L10 2Z'
+				stroke='currentColor'
+				strokeWidth='1.8'
+				strokeLinejoin='round'
+			/>
+			<path
+				d='m7.5 9.5 1.8 1.8 3.2-3.6'
+				stroke='currentColor'
+				strokeWidth='1.8'
+				strokeLinecap='round'
+				strokeLinejoin='round'
+			/>
+		</svg>
+	);
+}
+
 function RuleTestPanel({ rule }: { rule: Rule }) {
 	const maskMutation = useMaskMutation();
 	const [inputText, setInputText] = useState(rule.example_before);
@@ -47,7 +96,7 @@ function RuleTestPanel({ rule }: { rule: Rule }) {
 							<p className='font-bold mb-1'>ไม่พบข้อมูลที่ตรงกัน</p>
 						</div>
 					) : (
-						<div className='p-4 border-2 border-indigo-100 bg-indigo-50/30 dark:bg-indigo-900/10 dark:border-indigo-500/30 rounded-2xl font-mono whitespace-pre-wrap text-foreground text-sm'>
+						<div className='theme-result p-4 border-2 border-indigo-100 bg-indigo-50/30 rounded-2xl font-mono whitespace-pre-wrap text-foreground text-sm'>
 							{maskMutation.data.masked_text}
 						</div>
 					)}
@@ -171,16 +220,18 @@ export default function HowItWorks() {
 
 						<div className='grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono'>
 							<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
-								<span className='text-xs text-muted block mb-2 font-sans font-semibold'>
-									📝 ตัวอย่างข้อมูลเข้า
+								<span className='text-xs text-muted mb-2 font-sans font-semibold flex items-center gap-1.5'>
+									<DocIcon className='h-4 w-4' />
+									ตัวอย่างข้อมูลเข้า
 								</span>
 								<span className='text-foreground break-all'>
 									{rule.example_before}
 								</span>
 							</div>
 							<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
-								<span className='text-xs text-muted block mb-2 font-sans font-semibold'>
-									🛡️ ตัวอย่างผลลัพธ์
+								<span className='text-xs text-muted mb-2 font-sans font-semibold flex items-center gap-1.5'>
+									<ShieldIcon className='h-4 w-4' />
+									ตัวอย่างผลลัพธ์
 								</span>
 								<span className='text-heading break-all'>
 									{rule.example_after}
