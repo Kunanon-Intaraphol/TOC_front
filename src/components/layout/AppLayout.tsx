@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
+import { useShownRoute } from '../../route-transition-context';
 import Content from './Content';
 import Navbar from './Navbar';
 
@@ -20,8 +20,8 @@ export default function AppLayout({
 	children?: React.ReactNode;
 }) {
 	const [theme, setTheme] = useState<Theme>(getInitialTheme);
-	const { pathname } = useLocation();
-	const wide = pathname.startsWith('/playground');
+	const { shown } = useShownRoute();
+	const wide = shown.startsWith('/playground');
 
 	useEffect(() => {
 		document.documentElement.dataset.theme = theme;
