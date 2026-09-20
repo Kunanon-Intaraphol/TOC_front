@@ -14,13 +14,6 @@
 	color: var(--text-heading);
 }
 
-.about-particles {
-	position: fixed;
-	inset: 0;
-	z-index: 0;
-	pointer-events: none;
-}
-
 .about-team-visual,
 .about-team-list-panel {
 	position: relative;
