@@ -1,24 +1,29 @@
 export const INPUT_DEBOUNCE_DELAY_MS = 300;
 
 export const SAMPLES = {
-	bank: `[2025-05-18 14:32:05] [PAYMENT-GATEWAY] INFO:
-Customer transaction processed successfully.
-- Account Holder: Somchai Prasert
-- Thai ID: 1-1004-99283-44-1
-- Card Number: 4129-8837-1928-8921
-- Contact Tel: 089-123-4567
-- Email Address: somchai.dev@scb-digital.co.th
-- Date of Birth: 14/09/2535
-- Address: 128/45 Moo 5 Sukhumvit Rd, Khlong Toei, Bangkok 10110
-- Transaction Amount: 12,500.00 THB`,
-	ecommerce: `ORDER #TH-90812
-ผู้รับ: วราภรณ์ สุขเกษม
-เบอร์ติดต่อ: 092-445-6789
-อีเมล: waraporn_s@gmail.com
-วันเกิด: 28/02/2541
-Address: 99/142 หมู่บ้านพฤกษาวิลล์ ซอยรามคำแหง 24 กทม. 10240
-เลขบัตรเครดิตชำระ: 5412-7512-3412-4432
-รหัสบัตรประชาชน: 3-5012-00431-89-2`,
+	capybara: `Customer: พี่คาปิบาร่า กวนอู (บอสใหญ่ส้มส้ม)
+Email: capybara.chill@onsen-paradise.com
+Phone: 099-123-4567
+DOB: 25/12/2543
+Address: 555/99 ซอยออนเซ็น ถนนคาปิบาร่าแลนด์
+Card: 4111-2222-3333-4444
+Note: VIP Customer (กินส้มแล้วนอน)`,
+	batman: `[2025-05-18 03:33:33] [BAT-COMPUTER] WARNING:
+Target identified: Bruce Wayne (Batman)
+Email: batman.bkk@gotham-city.co.th
+Phone: 088-777-9999
+DOB: 19/02/2538
+Address: 100/1 Wayne Manor, Batcave Road
+Card: 5555-6666-7777-8888
+Transaction: 999,999.00 THB for Batarangs`,
+	doraemon: `ORDER #DORA-2112
+Recipient: โนบิ โนบิตะ (ตัวแทนโดราเอมอน)
+Email: nobita.dorayaki@tokyo-pocket.jp
+Phone: 081-987-6543
+DOB: 07/08/2507
+Address: 3/14 ซอยของวิเศษ ถนนโดรายากิ
+Card: 4532-1111-2222-3333
+Item: ประตูไปที่ไหนก็ได้ x 1`,
 };
 
-export const DEFAULT_SAMPLE_TEXT = SAMPLES.bank;
+export const DEFAULT_SAMPLE_TEXT = SAMPLES.capybara;

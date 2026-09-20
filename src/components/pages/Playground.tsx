@@ -300,17 +300,24 @@ export default function Playground() {
 									</span>
 									<button
 										type='button'
-										onClick={() => setInputText(SAMPLES.bank)}
+										onClick={() => setInputText(SAMPLES.capybara)}
 										className='rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-indigo-500/5 hover:text-indigo-600'
 									>
-										Log ธนาคารโอนเงิน
+										คาปิบาร่าชิลล์ชิลล์
 									</button>
 									<button
 										type='button'
-										onClick={() => setInputText(SAMPLES.ecommerce)}
+										onClick={() => setInputText(SAMPLES.batman)}
 										className='rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-indigo-500/5 hover:text-indigo-600'
 									>
-										คำสั่งซื้อ E-Commerce
+										แบทแมน อัศวินรัตติกาล
+									</button>
+									<button
+										type='button'
+										onClick={() => setInputText(SAMPLES.doraemon)}
+										className='rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-indigo-500/5 hover:text-indigo-600'
+									>
+										โดราเอมอน & โนบิตะ
 									</button>
 								</div>
 								<span className='text-[11px] text-muted'>

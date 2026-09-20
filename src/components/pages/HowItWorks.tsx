@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useRulesQuery } from '../../services/rules.service';
 import { useMaskMutation } from '../../services/mask.service';
+import { useRulesQuery } from '../../services/rules.service';
 import type { Rule } from '../../types/rules.types';
 
 export default function HowItWorks() {
