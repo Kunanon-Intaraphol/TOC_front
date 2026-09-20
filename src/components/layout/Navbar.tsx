@@ -42,7 +42,6 @@ export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
 				aria-label='การนำทางหลัก'
 				className='relative flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-background/85 p-1.5 shadow-(--shadow-sm) backdrop-blur'
 			>
-				{/* Sliding active background */}
 				<span
 					aria-hidden='true'
 					style={{ left: pill.left, width: pill.width }}
@@ -73,7 +72,6 @@ export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
 
 				<span aria-hidden='true' className='mx-1 h-5 w-px shrink-0 bg-border' />
 
-				{/* Theme toggle */}
 				<button
 					type='button'
 					onClick={onThemeToggle}

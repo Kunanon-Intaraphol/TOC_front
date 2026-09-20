@@ -17,18 +17,32 @@ function ScrollToTop() {
 	return null;
 }
 
+function PageTransition({ children }: { children?: React.ReactNode }) {
+	const { pathname } = useLocation();
+	return (
+		<div
+			key={pathname}
+			className='page-enter flex min-h-0 min-w-0 flex-1 flex-col'
+		>
+			{children}
+		</div>
+	);
+}
+
 function App() {
 	return (
 		<div className='theme-bg'>
 			<AppLayout>
 				<ScrollToTop />
-				<Routes>
-					<Route path='/' element={<Home />} />
-					<Route path='/playground' element={<Playground />} />
-					<Route path='/how-it-works' element={<HowItWorks />} />
-					<Route path='/about' element={<About />} />
-					<Route path='*' element={<Navigate to='/' replace />} />
-				</Routes>
+				<PageTransition>
+					<Routes>
+						<Route path='/' element={<Home />} />
+						<Route path='/playground' element={<Playground />} />
+						<Route path='/how-it-works' element={<HowItWorks />} />
+						<Route path='/about' element={<About />} />
+						<Route path='*' element={<Navigate to='/' replace />} />
+					</Routes>
+				</PageTransition>
 			</AppLayout>
 		</div>
 	);

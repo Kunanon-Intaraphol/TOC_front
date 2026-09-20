@@ -1,23 +1,5 @@
 import { Link } from 'react-router';
 
-const FEATURES = [
-	{
-		title: 'ตรวจจับอัตโนมัติ',
-		description:
-			'พิมพ์หรือวางข้อความ ระบบจะตรวจจับข้อมูลส่วนบุคคลและเซ็นเซอร์ให้ทันที',
-	},
-	{
-		title: 'สอดคล้องกับ PDPA',
-		description:
-			'ปกปิดข้อมูลอ่อนไหวตามแนวทาง พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562',
-	},
-	{
-		title: 'กฎที่ปรับได้',
-		description:
-			'เลือกเปิดหรือปิดประเภทข้อมูลที่จะเซ็นเซอร์ได้ตามต้องการ ทีละค่า',
-	},
-];
-
 export default function Home() {
 	return (
 		<div className='mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 py-10 text-center'>
@@ -41,17 +23,6 @@ export default function Home() {
 				>
 					ดูวิธีการทำงาน
 				</Link>
-			</div>
-
-			<div className='mt-12 grid grid-cols-1 gap-4 text-left sm:grid-cols-3'>
-				{FEATURES.map((feature) => (
-					<div key={feature.title} className='surface-panel rounded-3xl p-6'>
-						<h2 className='text-sm font-bold text-heading'>{feature.title}</h2>
-						<p className='mt-1.5 text-xs leading-relaxed text-muted'>
-							{feature.description}
-						</p>
-					</div>
-				))}
 			</div>
 		</div>
 	);
