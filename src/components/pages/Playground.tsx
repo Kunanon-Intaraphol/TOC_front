@@ -69,6 +69,18 @@ export default function Playground() {
 		resetMask();
 	}, [resetMask]);
 
+	const refreshMask = useCallback(
+		(text: string) => {
+			if (!text.trim()) return;
+			runMask({
+				text,
+				enabled_rules: allRuleIds,
+				include_matches: true,
+			});
+		},
+		[runMask, allRuleIds],
+	);
+
 	const handleInputTextChange = (value: string) => {
 		setInputText(value);
 		if (!value.trim()) clearResults();
@@ -92,6 +104,7 @@ export default function Playground() {
 				? prev.filter((key) => key !== valueKey)
 				: [...prev, valueKey],
 		);
+		refreshMask(inputText);
 	};
 
 	const handleToggleAllValues = () => {
@@ -101,6 +114,7 @@ export default function Playground() {
 			matchValueKey(match.rule_id, snapshot.text.slice(match.start, match.end)),
 		);
 		setIgnoredValues((prev) => (prev.length > 0 ? [] : [...new Set(allKeys)]));
+		refreshMask(inputText);
 	};
 
 	const handleSelectValue = (ruleId: string, start: number, end: number) => {
