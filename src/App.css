@@ -2,3 +2,238 @@
 	background-color: var(--bg);
 	color: var(--text);
 }
+
+.about-team {
+	position: relative;
+	display: flex;
+	height: calc(100svh - 4.35rem);
+	min-height: 0;
+	overflow: hidden;
+	margin: -2rem -1rem -2rem;
+	background: var(--bg);
+	color: var(--text-heading);
+}
+
+.about-particles {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+}
+
+.about-team-visual,
+.about-team-list-panel {
+	position: relative;
+	z-index: 1;
+}
+
+.about-team-visual {
+	display: flex;
+	flex: 1;
+	min-width: 0;
+	align-items: flex-end;
+	justify-content: center;
+	min-height: 0;
+	background: linear-gradient(135deg, color-mix(in srgb, var(--primary-bg) 75%, transparent), transparent 60%);
+}
+
+.about-team-mark {
+	position: absolute;
+	bottom: 2rem;
+	left: 1rem;
+	color: var(--text-heading);
+	font-size: clamp(4rem, 10vw, 9rem);
+	font-weight: 900;
+	font-style: italic;
+	letter-spacing: -0.08em;
+	line-height: 0.8;
+	opacity: 0.05;
+	white-space: nowrap;
+}
+
+.about-team-photo {
+	position: relative;
+	z-index: 1;
+	width: auto;
+	height: 85%;
+	max-width: 70%;
+	max-height: 100%;
+	min-height: 0;
+	object-fit: contain;
+	object-position: center top;
+	filter: contrast(1.05);
+	animation: about-photo-in 0.5s ease-out both;
+}
+
+.about-team-list-panel {
+	display: flex;
+	width: min(47%, 37.5rem);
+	min-width: 28rem;
+	min-height: 0;
+	flex-direction: column;
+	padding: 2.25rem clamp(1.5rem, 4vw, 3rem) 1.5rem;
+	background: color-mix(in srgb, var(--surface-2) 30%, transparent);
+	backdrop-filter: blur(8px);
+}
+
+.about-team-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	margin-bottom: 1.75rem;
+}
+
+.about-team-header h1 {
+	margin: 0;
+	font-size: clamp(1.875rem, 3.75vw, 3rem);
+	font-weight: 900;
+	font-style: italic;
+	letter-spacing: -0.07em;
+	line-height: 0.95;
+	text-transform: uppercase;
+}
+
+.about-team-header h1 span,
+.about-member.is-active .about-member-role {
+	color: #9333ea;
+}
+
+[data-theme='dark'] .about-team-header h1 span,
+[data-theme='dark'] .about-member.is-active .about-member-role {
+	color: #c084fc;
+}
+
+.about-team-header p {
+	margin: 0.55rem 0 0;
+	font-size: 0.56rem;
+	font-weight: 700;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	opacity: 0.7;
+}
+
+.about-team-status {
+	font-size: 0.95rem;
+	font-weight: 900;
+	opacity: 0.5;
+}
+
+.about-team-members {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	flex-direction: column;
+	overflow: hidden;
+	padding-right: 0;
+}
+
+.about-member {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	border: 0;
+	border-radius: 0.5rem;
+	min-height: 0;
+	padding: 0.58rem 0.75rem;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	text-align: left;
+	transition: background 0.25s ease, color 0.25s ease;
+}
+
+.about-member:hover,
+.about-member:focus-visible,
+.about-member.is-active {
+	background: color-mix(in srgb, var(--text-heading) 8%, transparent);
+}
+
+.about-member-role {
+	width: 5.25rem;
+	flex: 0 0 5.25rem;
+	padding-right: 0.75rem;
+	font-size: 0.525rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-align: right;
+	text-transform: uppercase;
+	opacity: 0.6;
+}
+
+.about-member-name {
+	flex: 1;
+	font-size: clamp(0.825rem, 1.875vw, 1.35rem);
+	font-weight: 900;
+	font-style: italic;
+	letter-spacing: -0.04em;
+	text-transform: uppercase;
+}
+
+.about-member.is-active .about-member-name {
+	transform: scale(1.03);
+	transform-origin: left;
+}
+
+.about-progress-ring {
+	width: 1.5rem;
+	height: 1.5rem;
+	margin-left: 0.5rem;
+	transform: rotate(-90deg);
+}
+
+.about-progress-track,
+.about-progress-value {
+	fill: transparent;
+	stroke: currentColor;
+	stroke-width: 2;
+}
+
+.about-progress-track {
+	opacity: 0.2;
+}
+
+.about-progress-value {
+	transition: stroke-dashoffset 75ms linear;
+}
+
+@keyframes about-photo-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+	.about-team {
+		flex-direction: column;
+		height: calc(100svh - 5.35rem);
+		margin: -2rem -1rem;
+	}
+
+	.about-team-visual {
+		flex: 0 0 38%;
+		min-height: 0;
+	}
+
+	.about-team-photo {
+		width: auto;
+		height: 90%;
+		max-width: 60%;
+	}
+
+	.about-team-list-panel {
+		width: 100%;
+		min-width: 0;
+		min-height: 0;
+		padding: 1rem 1rem 1.25rem;
+	}
+
+	.about-team-header {
+		margin-bottom: 0.75rem;
+	}
+
+	.about-member-role {
+		width: 5.5rem;
+		flex-basis: 5.5rem;
+		padding-right: 0.75rem;
+		font-size: 0.6rem;
+	}
+}
