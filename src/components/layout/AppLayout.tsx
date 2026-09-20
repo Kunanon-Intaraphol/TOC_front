@@ -31,7 +31,7 @@ export default function AppLayout({
 	);
 
 	return (
-		<div className='app-shell flex min-h-svh flex-col'>
+		<div className='app-shell theme-page flex min-h-svh flex-col'>
 			<Navbar theme={theme} onThemeToggle={toggleTheme} />
 			<div className='mx-auto flex w-full max-w-7xl flex-1'>
 				<Content>{children}</Content>
