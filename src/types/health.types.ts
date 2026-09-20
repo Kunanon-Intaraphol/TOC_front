@@ -1,5 +1,5 @@
 export interface HealthResponse {
-  status: string;
-  app: string;
-  version: string;
+	status: string;
+	app: string;
+	version: string;
 }
