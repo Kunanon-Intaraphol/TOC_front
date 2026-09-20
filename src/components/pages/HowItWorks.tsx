@@ -133,7 +133,7 @@ export default function HowItWorks() {
 								</div>
 							)}
 
-							{/* ผลลัพธ์จากการทดลอง */}
+							{/* result */}
 							{maskMutation.data && (
 								<div className='mt-6 animate-in fade-in duration-300'>
 									{maskMutation.data.summary.total === 0 ? (
