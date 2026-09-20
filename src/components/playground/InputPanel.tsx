@@ -105,7 +105,7 @@ export default function InputPanel({
 							onClick={onToggleAutoMode}
 							className={`group relative flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-colors ${
 								isAutoMode
-									? 'border-indigo-200 bg-indigo-500/10 text-indigo-700'
+									? 'theme-accent border-indigo-200 bg-indigo-500/10 text-indigo-700'
 									: 'border-border bg-surface-2 text-muted hover:text-foreground'
 							}`}
 						>
@@ -159,7 +159,7 @@ export default function InputPanel({
 						<button
 							type='button'
 							onClick={onPaste}
-							className='flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-500/5 px-3 py-1.5 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-500/10'
+							className='flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-500/5 px-3 py-1.5 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-500/10 theme-accent'
 						>
 							<PasteIcon className='h-4 w-4' /> วางข้อความ
 						</button>
@@ -184,14 +184,14 @@ export default function InputPanel({
 					<button
 						type='button'
 						onClick={() => onSelectSample(SAMPLES.capybara)}
-						className='rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-indigo-500/5 hover:text-indigo-600'
+						className='theme-accent-hover rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-indigo-500/5 hover:text-indigo-600'
 					>
 						คาปิบาร่าชิลล์ชิลล์
 					</button>
 					<button
 						type='button'
 						onClick={() => onSelectSample(SAMPLES.batman)}
-						className='rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-indigo-500/5 hover:text-indigo-600'
+						className='theme-accent-hover rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-indigo-500/5 hover:text-indigo-600'
 					>
 						แบทแมน อัศวินรัตติกาล
 					</button>

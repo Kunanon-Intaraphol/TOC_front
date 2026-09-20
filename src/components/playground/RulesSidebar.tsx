@@ -222,7 +222,7 @@ export default function RulesSidebar({
 							title='กรองตามหมวดหมู่'
 							className={`flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold transition-colors ${
 								hiddenRuleIds.length > 0
-									? 'bg-indigo-500/10 text-indigo-600'
+									? 'theme-accent bg-indigo-500/10 text-indigo-600'
 									: 'text-muted hover:text-foreground'
 							}`}
 						>
@@ -253,7 +253,7 @@ export default function RulesSidebar({
 									<button
 										type='button'
 										onClick={() => setHiddenRuleIds([])}
-										className='font-semibold text-indigo-600 hover:underline'
+										className='theme-accent font-semibold text-indigo-600 hover:underline'
 									>
 										ทั้งหมด
 									</button>
@@ -282,7 +282,12 @@ export default function RulesSidebar({
 											className='checkbox-input sr-only'
 										/>
 										<Checkbox checked={isVisible} size='sm' />
-										<span className='truncate'>{rule.label_th}</span>
+										<span className='truncate'>
+											{rule.label_th}{' '}
+											<span className='font-mono text-muted'>
+												({matchesByRuleId[rule.id]?.length ?? 0})
+											</span>
+										</span>
 									</label>
 								);
 							})}
@@ -295,13 +300,13 @@ export default function RulesSidebar({
 						พบ {valueRows.length} รายการ
 					</span>
 					<div className='flex items-center gap-2'>
-						<span className='rounded-full bg-indigo-500/10 px-2 py-0.5 font-mono text-[11px] font-semibold text-indigo-600'>
+						<span className='rounded-full bg-indigo-500/10 px-2 py-0.5 font-mono text-[11px] font-semibold text-indigo-600 theme-accent'>
 							{valueRows.length - ignoredValues.length}/{valueRows.length}
 						</span>
 						<button
 							type='button'
 							onClick={onToggleAllValues}
-							className='text-xs font-semibold text-indigo-600 transition-colors hover:underline'
+							className='text-xs font-semibold text-indigo-600 transition-colors hover:underline theme-accent'
 						>
 							{ignoredValues.length > 0 ? 'เลือกทั้งหมด' : 'ยกเลิกทั้งหมด'}
 						</button>
@@ -319,7 +324,7 @@ export default function RulesSidebar({
 						ไม่พบกฎที่ตรงกัน
 					</div>
 				) : (
-					valueRows.map((row, index) => {
+					valueRows.map((row) => {
 						const isChecked = !ignoredValues.includes(row.valueKey);
 						const theme = RULE_THEMES[row.rule.id] ?? RULE_THEMES.default;
 
@@ -327,9 +332,8 @@ export default function RulesSidebar({
 							<label
 								key={row.key}
 								id={`filter-row-${row.key}`}
-								style={{ animationDelay: `${Math.min(index * 35, 350)}ms` }}
 								onAnimationEnd={() => setSettledSeq(spotlight?.seq ?? null)}
-								className={`animate-enter relative flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-surface-2/70 p-3.5 shadow-sm transition-all ${theme.border} ${
+								className={`group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-border bg-surface-2/70 p-3.5 shadow-sm transition-all ${theme.border} ${
 									spotlight?.key === row.key && settledSeq !== spotlight.seq
 										? 'row-spotlight'
 										: ''
@@ -342,27 +346,23 @@ export default function RulesSidebar({
 									className='checkbox-input sr-only'
 								/>
 								<Checkbox checked={isChecked} />
+								<span className='pointer-events-none absolute -top-2.5 left-11 z-10 rounded-lg border border-border bg-surface px-2 py-0.5 text-xs font-bold text-heading opacity-0 shadow-sm transition-opacity group-hover:opacity-100'>
+									{row.rule.label_th}
+								</span>
 								<div className='min-w-0 flex-1 select-none'>
-									<span className='flex items-center gap-1.5 text-xs font-bold text-heading'>
-										<span className='truncate'>{row.rule.label_th}</span>
-									</span>
-									<div className='mt-2 rounded-xl bg-surface px-2.5 py-2 font-mono text-[11px] leading-relaxed'>
+									<div className='rounded-xl bg-surface px-2.5 py-2 font-mono text-[11px] leading-relaxed'>
 										<div className='break-all text-foreground'>
 											{row.rawText}
 										</div>
 										<div
-											aria-hidden='true'
-											className='flex justify-center py-0.5 text-muted'
-										>
-											↓
-										</div>
-										<div
-											className={`break-all rounded-lg px-1.5 py-0.5 ${
-												isChecked ? theme.badgeBg : 'bg-surface-2 text-muted'
+											className={`mt-1.5 break-all rounded-lg px-1.5 py-0.5 ${
+												isChecked
+													? `${theme.badgeBg} ${theme.badgeTheme}`
+													: 'bg-surface-2 text-muted'
 											}`}
 										>
-											{isChecked
-												? (row.maskedText ?? row.rule.example_after)
+											{isChecked && row.maskedText
+												? row.maskedText
 												: row.rawText}
 										</div>
 									</div>

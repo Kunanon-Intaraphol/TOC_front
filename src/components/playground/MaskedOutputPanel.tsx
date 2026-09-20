@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { matchValueKey } from '../../types/common.types';
 import type { MaskResponse } from '../../types/mask.types';
 import { RULE_THEMES } from './playground.themes';
@@ -78,10 +78,15 @@ export default function MaskedOutputPanel({
 	onCopy,
 	onSelectValue,
 }: MaskedOutputPanelProps) {
+	const lastDataRef = useRef<MaskResponse | undefined>(undefined);
+	useEffect(() => {
+		if (data) lastDataRef.current = data;
+	}, [data]);
+	const stableData = data ?? (snapshotText ? lastDataRef.current : undefined);
 	const { segments, maskedCount } = useMemo(() => {
-		const text = data?.masked_text ?? '';
+		const text = stableData?.masked_text ?? '';
 		if (!text) return { segments: [], maskedCount: 0 };
-		const ranges = (data?.matches ?? [])
+		const ranges = (stableData?.matches ?? [])
 			.filter((match) => match.start < match.end)
 			.sort((a, b) => a.start - b.start);
 
@@ -134,7 +139,7 @@ export default function MaskedOutputPanel({
 			});
 		}
 		return { segments: result, maskedCount: masked };
-	}, [data, snapshotText, ignoredValues]);
+	}, [stableData, snapshotText, ignoredValues]);
 
 	const displayText = useMemo(
 		() => segments.map((segment) => segment.text).join(''),
@@ -152,8 +157,8 @@ export default function MaskedOutputPanel({
 					<button
 						type='button'
 						onClick={() => onCopy(displayText)}
-						disabled={!data}
-						className={`flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
+						disabled={!stableData}
+						className={`theme-accent flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${
 							isCopied
 								? 'border-emerald-200 bg-emerald-500/10 text-emerald-700'
 								: 'border-indigo-200 bg-indigo-500/5 text-indigo-600 hover:bg-indigo-500/10'
@@ -169,14 +174,14 @@ export default function MaskedOutputPanel({
 				</div>
 
 				<div className='relative flex min-h-0 flex-1 flex-col'>
-					{isProcessing && !data ? (
+					{isProcessing && !stableData ? (
 						<div className='flex min-h-[220px] flex-1 flex-col justify-center gap-2.5 rounded-2xl border border-border bg-surface p-5 lg:min-h-0'>
 							<div className='skeleton h-4 w-11/12 rounded-lg' />
 							<div className='skeleton h-4 w-full rounded-lg' />
 							<div className='skeleton h-4 w-4/5 rounded-lg' />
 							<div className='skeleton h-4 w-3/5 rounded-lg' />
 						</div>
-					) : !data ? (
+					) : !stableData ? (
 						<div className='animate-enter flex min-h-[220px] flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface-2/50 p-6 text-center lg:min-h-0'>
 							<p className='text-sm font-medium text-heading'>
 								ผลลัพธ์จะแสดงที่นี่ . . .
@@ -186,10 +191,7 @@ export default function MaskedOutputPanel({
 							</p>
 						</div>
 					) : (
-						<div
-							key={data.masked_text}
-							className='animate-enter flex min-h-0 flex-1 flex-col'
-						>
+						<div className='animate-enter flex min-h-0 flex-1 flex-col'>
 							{isProcessing && (
 								<div className='skeleton mb-2 h-1.5 w-full shrink-0 rounded-full' />
 							)}
@@ -212,8 +214,8 @@ export default function MaskedOutputPanel({
 											onClick={spotlight}
 											className={`cursor-pointer rounded px-0.5 ${
 												segment.ignored
-													? 'bg-red-100/70 text-red-700'
-													: theme.badgeBg
+													? 'bg-red-100/70 text-red-700 theme-badge-red'
+													: `${theme.badgeBg} ${theme.badgeTheme}`
 											}`}
 										>
 											{segment.text}
@@ -233,7 +235,7 @@ export default function MaskedOutputPanel({
 				<span className='text-muted'>
 					เวลาที่ใช้ในการประมวลผล{' '}
 					<span className='font-mono'>
-						{(data?.processing_time_ms || 0).toFixed(2)} ms
+						{(stableData?.processing_time_ms || 0).toFixed(2)} ms
 					</span>
 				</span>
 			</div>
