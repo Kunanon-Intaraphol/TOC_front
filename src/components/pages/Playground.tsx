@@ -7,10 +7,10 @@ import { useDetectMutation } from '../../services/detect.service';
 import { useMaskMutation } from '../../services/mask.service';
 import { useRulesQuery } from '../../services/rules.service';
 import type { Match } from '../../types/common.types';
-import { matchValueKey } from '../../types/common.types';
+import { matchValueKey, valueRowKey } from '../../types/common.types';
 import InputPanel from '../playground/InputPanel';
 import MaskedOutputPanel from '../playground/MaskedOutputPanel';
-import RulesSidebar from '../playground/RulesSidebar';
+import RulesSidebar, { type RowSpotlight } from '../playground/RulesSidebar';
 
 export default function Playground() {
 	const [inputText, setInputText] = useState(DEFAULT_SAMPLE_TEXT);
@@ -20,8 +20,9 @@ export default function Playground() {
 		text: string;
 		matches: Match[];
 	} | null>(null);
-	// Raw values the user excluded from masking, keyed by value (not by rule).
+
 	const [ignoredValues, setIgnoredValues] = useState<string[]>([]);
+	const [spotlight, setSpotlight] = useState<RowSpotlight | null>(null);
 	const requestIdRef = useRef(0);
 
 	const { data: rulesData, isLoading: isRulesLoading } = useRulesQuery();
@@ -36,8 +37,6 @@ export default function Playground() {
 		[rulesData],
 	);
 
-	// Sidebar shows the last detect snapshot and only refreshes when the
-	// input text changes. Value toggles never touch the snapshot.
 	const lastDetectedTextRef = useRef<string | null>(null);
 
 	const runDetectAndMask = useCallback(
@@ -45,6 +44,11 @@ export default function Playground() {
 			requestIdRef.current += 1;
 			const requestId = requestIdRef.current;
 			lastDetectedTextRef.current = text;
+			runMask({
+				text,
+				enabled_rules: allRuleIds,
+				include_matches: true,
+			});
 			try {
 				const detectData = await detectAsync({
 					text,
@@ -53,14 +57,7 @@ export default function Playground() {
 				});
 				if (requestIdRef.current !== requestId) return;
 				setDetectSnapshot({ text, matches: detectData.matches ?? [] });
-				runMask({
-					text,
-					enabled_rules: allRuleIds,
-					include_matches: true,
-				});
-			} catch {
-				// Keep the previous results on transient failures.
-			}
+			} catch {}
 		},
 		[detectAsync, runMask, allRuleIds],
 	);
@@ -81,8 +78,6 @@ export default function Playground() {
 		if (!isAutoMode || !inputText.trim()) return;
 
 		const debounceTimer = setTimeout(() => {
-			// New input → detect first, then mask. Value toggles are pure
-			// frontend and never refire the pipeline.
 			if (lastDetectedTextRef.current !== inputText) {
 				void runDetectAndMask(inputText);
 			}
@@ -108,6 +103,11 @@ export default function Playground() {
 		setIgnoredValues((prev) => (prev.length > 0 ? [] : [...new Set(allKeys)]));
 	};
 
+	const handleSelectValue = (ruleId: string, start: number, end: number) => {
+		const key = valueRowKey(ruleId, start, end);
+		setSpotlight((prev) => ({ key, seq: (prev?.seq ?? 0) + 1 }));
+	};
+
 	const handleMask = () => {
 		if (!inputText.trim()) return;
 		void runDetectAndMask(inputText);
@@ -129,6 +129,15 @@ export default function Playground() {
 		const text = await navigator.clipboard.readText();
 		setInputText(text);
 	};
+
+	const isOutputProcessing =
+		maskMutation.isPending ||
+		(!maskMutation.data &&
+			isAutoMode &&
+			!maskMutation.isError &&
+			!detectMutation.isError &&
+			inputText.trim() !== '' &&
+			detectSnapshot?.text !== inputText);
 
 	return (
 		<div className='flex min-h-0 flex-1 flex-col font-sans text-foreground selection:bg-indigo-500 selection:text-white'>
@@ -152,7 +161,9 @@ export default function Playground() {
 							snapshotText={detectSnapshot?.text ?? ''}
 							ignoredValues={ignoredValues}
 							isCopied={isCopied}
+							isProcessing={isOutputProcessing}
 							onCopy={handleCopy}
+							onSelectValue={handleSelectValue}
 						/>
 					</div>
 
@@ -165,6 +176,7 @@ export default function Playground() {
 						ignoredValues={ignoredValues}
 						onToggleValue={handleToggleValue}
 						onToggleAllValues={handleToggleAllValues}
+						spotlight={spotlight}
 					/>
 				</div>
 			</div>

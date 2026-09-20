@@ -16,3 +16,9 @@ export interface Summary {
 
 export const matchValueKey = (ruleId: string, rawText: string): string =>
 	`${ruleId}::${rawText}`;
+
+export const valueRowKey = (
+	ruleId: string,
+	start: number,
+	end: number,
+): string => `${ruleId}-${start}-${end}`;

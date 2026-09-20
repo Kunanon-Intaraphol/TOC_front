@@ -1,8 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Match } from '../../types/common.types';
-import { matchValueKey } from '../../types/common.types';
+import { matchValueKey, valueRowKey } from '../../types/common.types';
 import type { Rule } from '../../types/rules.types';
 import { RULE_THEMES } from './playground.themes';
+
+export type RowSpotlight = {
+	key: string;
+	seq: number;
+};
 
 type RulesSidebarProps = {
 	rules?: Rule[];
@@ -13,6 +18,7 @@ type RulesSidebarProps = {
 	ignoredValues: string[];
 	onToggleValue: (valueKey: string) => void;
 	onToggleAllValues: () => void;
+	spotlight?: RowSpotlight | null;
 };
 
 type ValueRow = {
@@ -53,7 +59,7 @@ function Checkbox({
 		<span
 			aria-hidden='true'
 			data-checked={checked}
-			className={`black-check ${size === 'sm' ? 'black-check-sm' : 'black-check-md'}`}
+			className={`checkbox ${size === 'sm' ? 'checkbox-sm' : 'checkbox-md'}`}
 		>
 			<svg viewBox='0 0 12 12' fill='none'>
 				<path
@@ -96,10 +102,19 @@ export default function RulesSidebar({
 	ignoredValues,
 	onToggleValue,
 	onToggleAllValues,
+	spotlight = null,
 }: RulesSidebarProps) {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const [hiddenRuleIds, setHiddenRuleIds] = useState<string[]>([]);
+	const [settledSeq, setSettledSeq] = useState<number | null>(null);
+
+	useEffect(() => {
+		if (!spotlight) return;
+		document
+			.getElementById(`filter-row-${spotlight.key}`)
+			?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}, [spotlight]);
 
 	const matchesByRuleId = useMemo(() => {
 		const grouped: Record<string, Match[]> = {};
@@ -123,12 +138,12 @@ export default function RulesSidebar({
 		const rows: ValueRow[] = [];
 		for (const rule of visibleRules) {
 			const ruleMatches = matchesByRuleId[rule.id] ?? [];
-			// Only values actually found in the input get a row.
+
 			for (const match of ruleMatches) {
 				const rawText = inputText.slice(match.start, match.end);
 				const masked = maskedText?.slice(match.start, match.end) || null;
 				rows.push({
-					key: `${rule.id}-${match.start}-${match.end}`,
+					key: valueRowKey(rule.id, match.start, match.end),
 					valueKey: matchValueKey(rule.id, rawText),
 					rule,
 					start: match.start,
@@ -138,7 +153,6 @@ export default function RulesSidebar({
 			}
 		}
 
-		// Found order: values as they appear in the input
 		rows.sort((a, b) => a.start - b.start);
 
 		if (!normalizedQuery) return rows;
@@ -176,7 +190,6 @@ export default function RulesSidebar({
 					</p>
 				</div>
 
-				{/* Search + category filter */}
 				<div className='flex items-center rounded-xl border border-border bg-surface-2 px-3 py-2 transition focus-within:border-indigo-400 focus-within:bg-surface'>
 					<SearchIcon className='mr-2 h-4 w-4 shrink-0 text-muted' />
 					<input
@@ -184,7 +197,7 @@ export default function RulesSidebar({
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						placeholder='ค้นหาประเภทหรือค่า...'
-						className='w-full min-w-0 flex-1 bg-transparent text-xs text-foreground placeholder:text-muted focus:outline-none'
+						className='filter-search-input w-full min-w-0 flex-1 bg-transparent text-xs text-foreground placeholder:text-muted focus:outline-none'
 					/>
 					{searchQuery && (
 						<button
@@ -219,60 +232,64 @@ export default function RulesSidebar({
 							</span>
 						</button>
 						{isFilterOpen && (
-							<>
-								<button
-									type='button'
-									aria-label='ปิดตัวกรองหมวดหมู่'
-									onClick={() => setIsFilterOpen(false)}
-									className='fixed inset-0 z-10 cursor-default bg-transparent'
-								/>
-								<div className='absolute right-0 top-full z-20 mt-2 w-60 rounded-2xl border border-border bg-surface p-2 shadow-xl'>
-									<div className='flex items-center justify-between px-2 py-1.5 text-xs'>
-										<span className='font-bold text-heading'>หมวดหมู่</span>
-										<div className='flex items-center gap-2'>
-											<button
-												type='button'
-												onClick={() => setHiddenRuleIds([])}
-												className='font-semibold text-indigo-600 hover:underline'
-											>
-												ทั้งหมด
-											</button>
-											<button
-												type='button'
-												onClick={() =>
-													setHiddenRuleIds(rules.map((rule) => rule.id))
-												}
-												className='font-semibold text-muted hover:text-foreground'
-											>
-												ล้าง
-											</button>
-										</div>
-									</div>
-									{rules.map((rule) => {
-										const isVisible = !hiddenRuleIds.includes(rule.id);
-										return (
-											<label
-												key={rule.id}
-												className='relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 text-xs text-foreground transition-colors hover:bg-surface-2'
-											>
-												<input
-													type='checkbox'
-													checked={isVisible}
-													onChange={() => toggleHiddenRule(rule.id)}
-													className='black-check-input sr-only'
-												/>
-												<Checkbox checked={isVisible} size='sm' />
-												<span className='truncate'>{rule.label_th}</span>
-											</label>
-										);
-									})}
-								</div>
-							</>
+							<button
+								type='button'
+								aria-label='ปิดตัวกรองหมวดหมู่'
+								onClick={() => setIsFilterOpen(false)}
+								className='fixed inset-0 z-10 cursor-default bg-transparent'
+							/>
 						)}
+						<div
+							className={`absolute right-0 top-full z-20 mt-4 w-64 origin-top-right rounded-2xl border border-border bg-surface p-2 shadow-xl transition-all duration-200 ${
+								isFilterOpen
+									? 'visible translate-y-0 scale-100 opacity-100'
+									: 'invisible -translate-y-2 scale-95 opacity-0'
+							}`}
+							aria-hidden={!isFilterOpen}
+						>
+							<div className='flex items-center justify-between px-2 py-1.5 text-xs'>
+								<span className='font-bold text-heading'>หมวดหมู่</span>
+								<div className='flex items-center gap-2'>
+									<button
+										type='button'
+										onClick={() => setHiddenRuleIds([])}
+										className='font-semibold text-indigo-600 hover:underline'
+									>
+										ทั้งหมด
+									</button>
+									<button
+										type='button'
+										onClick={() =>
+											setHiddenRuleIds(rules.map((rule) => rule.id))
+										}
+										className='font-semibold text-muted hover:text-foreground'
+									>
+										ล้าง
+									</button>
+								</div>
+							</div>
+							{rules.map((rule) => {
+								const isVisible = !hiddenRuleIds.includes(rule.id);
+								return (
+									<label
+										key={rule.id}
+										className='relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 text-xs text-foreground transition-colors hover:bg-surface-2'
+									>
+										<input
+											type='checkbox'
+											checked={isVisible}
+											onChange={() => toggleHiddenRule(rule.id)}
+											className='checkbox-input sr-only'
+										/>
+										<Checkbox checked={isVisible} size='sm' />
+										<span className='truncate'>{rule.label_th}</span>
+									</label>
+								);
+							})}
+						</div>
 					</div>
 				</div>
 
-				{/* Match Count & Select All */}
 				<div className='flex items-center justify-between text-xs'>
 					<span className='font-medium text-muted'>
 						พบ {valueRows.length} รายการ
@@ -292,7 +309,6 @@ export default function RulesSidebar({
 				</div>
 			</div>
 
-			{/* Value rows — one row per detected value, server order, never re-sorted */}
 			<div className='flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto pt-4'>
 				{isLoading ? (
 					<div className='flex h-24 items-center justify-center text-xs text-muted'>
@@ -303,20 +319,27 @@ export default function RulesSidebar({
 						ไม่พบกฎที่ตรงกัน
 					</div>
 				) : (
-					valueRows.map((row) => {
+					valueRows.map((row, index) => {
 						const isChecked = !ignoredValues.includes(row.valueKey);
 						const theme = RULE_THEMES[row.rule.id] ?? RULE_THEMES.default;
 
 						return (
 							<label
 								key={row.key}
-								className={`relative flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-surface-2/70 p-3.5 shadow-sm transition-all ${theme.border}`}
+								id={`filter-row-${row.key}`}
+								style={{ animationDelay: `${Math.min(index * 35, 350)}ms` }}
+								onAnimationEnd={() => setSettledSeq(spotlight?.seq ?? null)}
+								className={`animate-enter relative flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-surface-2/70 p-3.5 shadow-sm transition-all ${theme.border} ${
+									spotlight?.key === row.key && settledSeq !== spotlight.seq
+										? 'row-spotlight'
+										: ''
+								}`}
 							>
 								<input
 									type='checkbox'
 									checked={isChecked}
 									onChange={() => onToggleValue(row.valueKey)}
-									className='black-check-input sr-only'
+									className='checkbox-input sr-only'
 								/>
 								<Checkbox checked={isChecked} />
 								<div className='min-w-0 flex-1 select-none'>
