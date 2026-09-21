@@ -1,6 +1,8 @@
-const RAW_URL = (
-	import.meta.env.VITE_API_URL || 'http://localhost:8000'
-).replace(/\/+$/, '');
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
+export const apiClient = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
+  const defaultHeaders = {
+    'Content-Type': 'application/json',
+  };
 
 export const API_BASE_URL = `${RAW_URL}/api/v1`;
 
