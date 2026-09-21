@@ -12,6 +12,8 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
 # ---------- build (static bundle in /app/dist) ----------
 FROM base AS build
+# Inlined by Vite at build time; nginx proxies this path to the backend
+ENV VITE_API_BASE_URL=/api/v1
 RUN npm ci
 COPY . .
 RUN npm run build
