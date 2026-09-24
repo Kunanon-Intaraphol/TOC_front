@@ -16,6 +16,8 @@ type RulesSidebarProps = {
 	inputText?: string;
 	maskedText?: string | null;
 	ignoredValues: string[];
+	hiddenRuleIds: string[];
+	onHiddenRuleIdsChange: (ruleIds: string[]) => void;
 	onToggleValue: (valueKey: string) => void;
 	onToggleAllValues: () => void;
 	spotlight?: RowSpotlight | null;
@@ -100,13 +102,14 @@ export default function RulesSidebar({
 	inputText = '',
 	maskedText = null,
 	ignoredValues,
+	hiddenRuleIds,
+	onHiddenRuleIdsChange,
 	onToggleValue,
 	onToggleAllValues,
 	spotlight = null,
 }: RulesSidebarProps) {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
-	const [hiddenRuleIds, setHiddenRuleIds] = useState<string[]>([]);
 	const [settledSeq, setSettledSeq] = useState<number | null>(null);
 
 	useEffect(() => {
@@ -171,10 +174,10 @@ export default function RulesSidebar({
 	}, [visibleRules, matchesByRuleId, inputText, maskedText, normalizedQuery]);
 
 	const toggleHiddenRule = (ruleId: string) => {
-		setHiddenRuleIds((prev) =>
-			prev.includes(ruleId)
-				? prev.filter((id) => id !== ruleId)
-				: [...prev, ruleId],
+		onHiddenRuleIdsChange(
+			hiddenRuleIds.includes(ruleId)
+				? hiddenRuleIds.filter((id) => id !== ruleId)
+				: [...hiddenRuleIds, ruleId],
 		);
 	};
 
@@ -252,7 +255,7 @@ export default function RulesSidebar({
 								<div className='flex items-center gap-2'>
 									<button
 										type='button'
-										onClick={() => setHiddenRuleIds([])}
+										onClick={() => onHiddenRuleIdsChange([])}
 										className='theme-accent font-semibold text-indigo-600 hover:underline'
 									>
 										ทั้งหมด
@@ -260,7 +263,7 @@ export default function RulesSidebar({
 									<button
 										type='button'
 										onClick={() =>
-											setHiddenRuleIds(rules.map((rule) => rule.id))
+											onHiddenRuleIdsChange(rules.map((rule) => rule.id))
 										}
 										className='font-semibold text-muted hover:text-foreground'
 									>

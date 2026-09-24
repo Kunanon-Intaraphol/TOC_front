@@ -8,6 +8,7 @@ import { useMaskMutation } from '../../services/mask.service';
 import { useRulesQuery } from '../../services/rules.service';
 import type { Match } from '../../types/common.types';
 import { matchValueKey, valueRowKey } from '../../types/common.types';
+import type { MaskResponse } from '../../types/mask.types';
 import InputPanel from '../playground/InputPanel';
 import MaskedOutputPanel from '../playground/MaskedOutputPanel';
 import RulesSidebar, { type RowSpotlight } from '../playground/RulesSidebar';
@@ -22,6 +23,7 @@ export default function Playground() {
 	} | null>(null);
 
 	const [ignoredValues, setIgnoredValues] = useState<string[]>([]);
+	const [hiddenRuleIds, setHiddenRuleIds] = useState<string[]>([]);
 	const [spotlight, setSpotlight] = useState<RowSpotlight | null>(null);
 	const requestIdRef = useRef(0);
 
@@ -37,48 +39,63 @@ export default function Playground() {
 		[rulesData],
 	);
 
-	const lastDetectedTextRef = useRef<string | null>(null);
+	const enabledRuleIds = useMemo(
+		() => allRuleIds.filter((id) => !hiddenRuleIds.includes(id)),
+		[allRuleIds, hiddenRuleIds],
+	);
+
+	const isFilterEmpty = allRuleIds.length > 0 && enabledRuleIds.length === 0;
+
+	const detectKey = `${inputText}::${enabledRuleIds.join(',')}`;
+	const lastDetectKeyRef = useRef<string | null>(null);
 
 	const runDetectAndMask = useCallback(
 		async (text: string) => {
 			requestIdRef.current += 1;
 			const requestId = requestIdRef.current;
-			lastDetectedTextRef.current = text;
-			runMask({
-				text,
-				enabled_rules: allRuleIds,
-				include_matches: true,
-			});
+			lastDetectKeyRef.current = `${text}::${enabledRuleIds.join(',')}`;
+
+			if (isFilterEmpty) {
+				resetMask();
+			} else {
+				runMask({
+					text,
+					enabled_rules: enabledRuleIds,
+					include_matches: true,
+				});
+			}
+
 			try {
 				const detectData = await detectAsync({
 					text,
-					enabled_rules: allRuleIds,
+					enabled_rules: allRuleIds.length > 0 ? allRuleIds : undefined,
 					include_matches: true,
 				});
 				if (requestIdRef.current !== requestId) return;
 				setDetectSnapshot({ text, matches: detectData.matches ?? [] });
 			} catch {}
 		},
-		[detectAsync, runMask, allRuleIds],
+		[detectAsync, runMask, resetMask, enabledRuleIds, allRuleIds, isFilterEmpty],
 	);
 
 	const clearResults = useCallback(() => {
 		requestIdRef.current += 1;
-		lastDetectedTextRef.current = null;
+		lastDetectKeyRef.current = null;
 		setDetectSnapshot(null);
 		resetMask();
 	}, [resetMask]);
 
 	const refreshMask = useCallback(
 		(text: string) => {
-			if (!text.trim()) return;
+			if (!text.trim() || (allRuleIds.length > 0 && enabledRuleIds.length === 0))
+				return;
 			runMask({
 				text,
-				enabled_rules: allRuleIds,
+				enabled_rules: enabledRuleIds,
 				include_matches: true,
 			});
 		},
-		[runMask, allRuleIds],
+		[runMask, enabledRuleIds, allRuleIds],
 	);
 
 	const handleInputTextChange = (value: string) => {
@@ -90,13 +107,23 @@ export default function Playground() {
 		if (!isAutoMode || !inputText.trim()) return;
 
 		const debounceTimer = setTimeout(() => {
-			if (lastDetectedTextRef.current !== inputText) {
+			if (lastDetectKeyRef.current !== detectKey) {
 				void runDetectAndMask(inputText);
 			}
 		}, INPUT_DEBOUNCE_DELAY_MS);
 
 		return () => clearTimeout(debounceTimer);
-	}, [inputText, isAutoMode, runDetectAndMask]);
+	}, [inputText, isAutoMode, runDetectAndMask, detectKey]);
+
+	const handleHiddenRuleIdsChange = (ruleIds: string[]) => {
+		setHiddenRuleIds(ruleIds);
+		setIgnoredValues((prev) => {
+			const next = prev.filter(
+				(key) => !ruleIds.includes(key.split('::')[0]),
+			);
+			return next.length === prev.length ? prev : next;
+		});
+	};
 
 	const handleToggleValue = (valueKey: string) => {
 		setIgnoredValues((prev) =>
@@ -110,9 +137,14 @@ export default function Playground() {
 	const handleToggleAllValues = () => {
 		const snapshot = detectSnapshot;
 		if (!snapshot) return;
-		const allKeys = snapshot.matches.map((match) =>
-			matchValueKey(match.rule_id, snapshot.text.slice(match.start, match.end)),
-		);
+		const allKeys = snapshot.matches
+			.filter((match) => !hiddenRuleIds.includes(match.rule_id))
+			.map((match) =>
+				matchValueKey(
+					match.rule_id,
+					snapshot.text.slice(match.start, match.end),
+				),
+			);
 		setIgnoredValues((prev) => (prev.length > 0 ? [] : [...new Set(allKeys)]));
 		refreshMask(inputText);
 	};
@@ -153,6 +185,18 @@ export default function Playground() {
 			inputText.trim() !== '' &&
 			detectSnapshot?.text !== inputText);
 
+	const unmaskedResult: MaskResponse | null =
+		isFilterEmpty && detectSnapshot?.text
+			? {
+					masked_text: detectSnapshot.text,
+					summary: { total: 0, by_type: {} },
+					matches: [],
+					processing_time_ms: 0,
+				}
+			: null;
+
+	const outputData = unmaskedResult ?? maskMutation.data;
+
 	return (
 		<div className='flex min-h-0 flex-1 flex-col font-sans text-foreground selection:bg-indigo-500 selection:text-white'>
 			<div className='flex min-h-0 w-full flex-1 flex-col pb-10 lg:overflow-hidden lg:pb-0'>
@@ -171,7 +215,7 @@ export default function Playground() {
 						/>
 
 						<MaskedOutputPanel
-							data={maskMutation.data}
+							data={outputData}
 							snapshotText={detectSnapshot?.text ?? ''}
 							ignoredValues={ignoredValues}
 							isCopied={isCopied}
@@ -188,6 +232,8 @@ export default function Playground() {
 						inputText={detectSnapshot?.text ?? ''}
 						maskedText={maskMutation.data?.masked_text ?? null}
 						ignoredValues={ignoredValues}
+						hiddenRuleIds={hiddenRuleIds}
+						onHiddenRuleIdsChange={handleHiddenRuleIdsChange}
 						onToggleValue={handleToggleValue}
 						onToggleAllValues={handleToggleAllValues}
 						spotlight={spotlight}
