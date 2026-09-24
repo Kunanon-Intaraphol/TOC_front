@@ -40,7 +40,7 @@ export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
 		<header className='sticky top-0 z-(--z-nav) flex justify-center bg-transparent px-4 pt-4'>
 			<nav
 				aria-label='การนำทางหลัก'
-				className='relative flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-background/85 p-1.5 shadow-(--shadow-sm) backdrop-blur'
+				className='relative flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-background/85 p-1.5 shadow-(--shadow-sm) backdrop-blur select-none'
 			>
 				<span
 					aria-hidden='true'

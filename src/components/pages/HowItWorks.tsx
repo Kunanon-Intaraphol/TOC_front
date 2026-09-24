@@ -183,7 +183,7 @@ export default function HowItWorks() {
 			<aside className='lg:sticky lg:top-24 lg:self-start'>
 				<nav
 					aria-label='ส่วนวิธีการทำงาน'
-					className='flex gap-1 overflow-x-auto lg:flex-col custom-scrollbar'
+					className='flex gap-1 overflow-x-auto lg:flex-col custom-scrollbar select-none'
 				>
 					{rulesData.rules.map((rule) => {
 						const isActive = activeRuleId === rule.id;
