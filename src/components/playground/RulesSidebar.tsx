@@ -273,6 +273,7 @@ export default function RulesSidebar({
 							</div>
 							{rules.map((rule) => {
 								const isVisible = !hiddenRuleIds.includes(rule.id);
+								const theme = RULE_THEMES[rule.id] ?? RULE_THEMES.default;
 								return (
 									<label
 										key={rule.id}
@@ -285,6 +286,10 @@ export default function RulesSidebar({
 											className='checkbox-input sr-only'
 										/>
 										<Checkbox checked={isVisible} size='sm' />
+										<span
+											aria-hidden='true'
+											className={`h-2.5 w-2.5 shrink-0 rounded-full ${theme.swatch}`}
+										/>
 										<span className='truncate'>
 											{rule.label_th}{' '}
 											<span className='font-mono text-muted'>

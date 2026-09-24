@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { matchValueKey } from '../../types/common.types';
 import type { MaskResponse } from '../../types/mask.types';
+import type { Rule } from '../../types/rules.types';
 import { RULE_THEMES } from './playground.themes';
 
 function CopyIcon({ className = '' }: { className?: string }) {
@@ -53,6 +54,7 @@ type MaskedOutputPanelProps = {
 	data?: MaskResponse;
 	snapshotText?: string;
 	ignoredValues?: string[];
+	rules?: Rule[];
 	isCopied: boolean;
 	isProcessing?: boolean;
 	onCopy: (text: string) => void;
@@ -73,6 +75,7 @@ export default function MaskedOutputPanel({
 	data,
 	snapshotText = '',
 	ignoredValues = [],
+	rules = [],
 	isCopied,
 	isProcessing = false,
 	onCopy,
@@ -148,11 +151,22 @@ export default function MaskedOutputPanel({
 	return (
 		<div className='surface-panel flex min-h-[380px] flex-1 flex-col justify-between rounded-3xl p-6 text-foreground sm:p-7 lg:min-h-0 lg:overflow-hidden'>
 			<div className='flex min-h-0 flex-1 flex-col'>
-				<div className='mb-4 flex shrink-0 items-center justify-between border-b border-border pb-4'>
-					<div className='flex items-center gap-2.5'>
+				<div className='mb-4 flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border pb-4'>
+					<div className='flex flex-wrap items-center gap-x-2.5 gap-y-2'>
 						<h2 className='text-base font-bold text-heading'>
 							ผลลัพธ์การเซ็นเซอร์
 						</h2>
+						{rules.map((rule) => {
+							const theme = RULE_THEMES[rule.id] ?? RULE_THEMES.default;
+							return (
+								<span
+									key={rule.id}
+									className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${theme.badgeBg} ${theme.badgeTheme}`}
+								>
+									{rule.label_th || rule.label_en}
+								</span>
+							);
+						})}
 					</div>
 					<button
 						type='button'

@@ -75,7 +75,14 @@ export default function Playground() {
 				setDetectSnapshot({ text, matches: detectData.matches ?? [] });
 			} catch {}
 		},
-		[detectAsync, runMask, resetMask, enabledRuleIds, allRuleIds, isFilterEmpty],
+		[
+			detectAsync,
+			runMask,
+			resetMask,
+			enabledRuleIds,
+			allRuleIds,
+			isFilterEmpty,
+		],
 	);
 
 	const clearResults = useCallback(() => {
@@ -87,7 +94,10 @@ export default function Playground() {
 
 	const refreshMask = useCallback(
 		(text: string) => {
-			if (!text.trim() || (allRuleIds.length > 0 && enabledRuleIds.length === 0))
+			if (
+				!text.trim() ||
+				(allRuleIds.length > 0 && enabledRuleIds.length === 0)
+			)
 				return;
 			runMask({
 				text,
@@ -118,9 +128,7 @@ export default function Playground() {
 	const handleHiddenRuleIdsChange = (ruleIds: string[]) => {
 		setHiddenRuleIds(ruleIds);
 		setIgnoredValues((prev) => {
-			const next = prev.filter(
-				(key) => !ruleIds.includes(key.split('::')[0]),
-			);
+			const next = prev.filter((key) => !ruleIds.includes(key.split('::')[0]));
 			return next.length === prev.length ? prev : next;
 		});
 	};
@@ -218,6 +226,7 @@ export default function Playground() {
 							data={outputData}
 							snapshotText={detectSnapshot?.text ?? ''}
 							ignoredValues={ignoredValues}
+							rules={rulesData?.rules}
 							isCopied={isCopied}
 							isProcessing={isOutputProcessing}
 							onCopy={handleCopy}
