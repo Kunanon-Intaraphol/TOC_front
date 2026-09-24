@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMaskMutation } from '../../services/mask.service';
 import { useRulesQuery } from '../../services/rules.service';
 import type { Rule } from '../../types/rules.types';
+import { RULE_THEMES } from '../playground/playground.themes';
 
 function DocIcon({ className = '' }: { className?: string }) {
 	return (
@@ -115,14 +116,75 @@ export default function HowItWorks() {
 	} = useRulesQuery();
 
 	const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
+	const isAutoScrollingRef = useRef(false);
+	const autoScrollTimerRef = useRef<number | null>(null);
 
 	const activeRuleId =
 		rulesData?.rules.find((r) => r.id === selectedRuleId)?.id ??
 		rulesData?.rules[0]?.id ??
 		'';
 
+	useEffect(() => {
+		const rules = rulesData?.rules;
+		if (!rules || rules.length === 0) return;
+
+		const ids = rules.map((rule) => rule.id);
+
+		const updateActiveFromScroll = () => {
+			if (isAutoScrollingRef.current) return;
+
+			const atBottom =
+				window.innerHeight + window.scrollY >=
+				document.documentElement.scrollHeight - 2;
+
+			if (atBottom) {
+				setSelectedRuleId(ids[ids.length - 1]);
+				return;
+			}
+
+			const offset = 140;
+			let currentId = ids[0];
+			for (const id of ids) {
+				const element = document.getElementById(`rule-${id}`);
+				if (!element) continue;
+				if (element.getBoundingClientRect().top - offset <= 0) {
+					currentId = id;
+				} else {
+					break;
+				}
+			}
+			setSelectedRuleId(currentId);
+		};
+
+		updateActiveFromScroll();
+		window.addEventListener('scroll', updateActiveFromScroll, {
+			passive: true,
+		});
+		window.addEventListener('resize', updateActiveFromScroll);
+		return () => {
+			window.removeEventListener('scroll', updateActiveFromScroll);
+			window.removeEventListener('resize', updateActiveFromScroll);
+		};
+	}, [rulesData]);
+
+	useEffect(
+		() => () => {
+			if (autoScrollTimerRef.current !== null) {
+				window.clearTimeout(autoScrollTimerRef.current);
+			}
+		},
+		[],
+	);
+
 	const handleRuleClick = (rule: Rule) => {
 		setSelectedRuleId(rule.id);
+		isAutoScrollingRef.current = true;
+		if (autoScrollTimerRef.current !== null) {
+			window.clearTimeout(autoScrollTimerRef.current);
+		}
+		autoScrollTimerRef.current = window.setTimeout(() => {
+			isAutoScrollingRef.current = false;
+		}, 800);
 		document
 			.getElementById(`rule-${rule.id}`)
 			?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -187,18 +249,23 @@ export default function HowItWorks() {
 				>
 					{rulesData.rules.map((rule) => {
 						const isActive = activeRuleId === rule.id;
+						const theme = RULE_THEMES[rule.id] ?? RULE_THEMES.default;
 						return (
 							<button
 								key={rule.id}
 								type='button'
 								onClick={() => handleRuleClick(rule)}
 								aria-current={isActive ? 'true' : undefined}
-								className={`text-left rounded-lg px-3 py-2.5 text-sm whitespace-nowrap transition-colors ${
+								className={`flex items-center gap-2 text-left rounded-lg px-3 py-2.5 text-sm whitespace-nowrap transition-colors ${
 									isActive
 										? 'bg-primary-bg font-medium text-heading'
 										: 'text-muted hover:bg-surface-2 hover:text-foreground'
 								}`}
 							>
+								<span
+									aria-hidden='true'
+									className={`h-2.5 w-2.5 shrink-0 rounded-full ${theme.swatch}`}
+								/>
 								{rule.label_th || rule.label_en}
 							</button>
 						);
@@ -207,40 +274,49 @@ export default function HowItWorks() {
 			</aside>
 
 			<div className='min-w-0 flex flex-col gap-6'>
-				{rulesData.rules.map((rule) => (
-					<section
-						key={rule.id}
-						id={`rule-${rule.id}`}
-						className='bg-surface-2 scroll-mt-28 p-6 rounded-3xl border border-border'
-					>
-						<h2 className='text-2xl font-bold text-heading mb-2'>
-							{rule.label_th || rule.label_en}
-						</h2>
-						<p className='text-muted mb-6 text-sm'>{rule.description}</p>
+				{rulesData.rules.map((rule) => {
+					const theme = RULE_THEMES[rule.id] ?? RULE_THEMES.default;
+					return (
+						<section
+							key={rule.id}
+							id={`rule-${rule.id}`}
+							className='bg-surface-2 scroll-mt-28 p-6 rounded-3xl border border-border'
+						>
+							<div className='mb-2 flex items-center gap-2.5'>
+								<span
+									aria-hidden='true'
+									className={`h-3 w-3 shrink-0 rounded-full ${theme.swatch}`}
+								/>
+								<h2 className='text-2xl font-bold text-heading'>
+									{rule.label_th || rule.label_en}
+								</h2>
+							</div>
+							<p className='text-muted mb-6 text-sm'>{rule.description}</p>
 
-						<div className='grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono'>
-							<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
-								<span className='text-xs text-muted mb-2 font-sans font-semibold flex items-center gap-1.5'>
-									<DocIcon className='h-4 w-4' />
-									ตัวอย่างข้อมูลเข้า
-								</span>
-								<span className='text-foreground break-all'>
-									{rule.example_before}
-								</span>
+							<div className='grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono'>
+								<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
+									<span className='text-xs text-muted mb-2 font-sans font-semibold flex items-center gap-1.5'>
+										<DocIcon className='h-4 w-4' />
+										ตัวอย่างข้อมูลเข้า
+									</span>
+									<span className='text-foreground break-all'>
+										{rule.example_before}
+									</span>
+								</div>
+								<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
+									<span className='text-xs text-muted mb-2 font-sans font-semibold flex items-center gap-1.5'>
+										<ShieldIcon className='h-4 w-4' />
+										ตัวอย่างผลลัพธ์
+									</span>
+									<span className='text-heading break-all'>
+										{rule.example_after}
+									</span>
+								</div>
 							</div>
-							<div className='bg-background p-4 rounded-2xl border border-border shadow-sm'>
-								<span className='text-xs text-muted mb-2 font-sans font-semibold flex items-center gap-1.5'>
-									<ShieldIcon className='h-4 w-4' />
-									ตัวอย่างผลลัพธ์
-								</span>
-								<span className='text-heading break-all'>
-									{rule.example_after}
-								</span>
-							</div>
-						</div>
-						<RuleTestPanel rule={rule} />
-					</section>
-				))}
+							<RuleTestPanel rule={rule} />
+						</section>
+					);
+				})}
 			</div>
 		</div>
 	);
