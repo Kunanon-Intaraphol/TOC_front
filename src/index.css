@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 
-/* maps vars to tailwind, pls don't delete */
 @theme inline {
 	--color-background: var(--bg);
 	--color-surface: var(--surface);
@@ -32,6 +31,9 @@
 	--primary-bg: rgb(99 102 241 / 0.12);
 	--accent: #4f46e5;
 	--accent-soft: rgba(79, 70, 229, 0.12);
+	--panel-text: #4b5563;
+	--panel-muted: #6b7280;
+	--panel-heading: #111827;
 	--shadow-color: rgb(15 23 42 / 0.08);
 	--bg-glow-a: rgba(99, 102, 241, 0.14);
 	--bg-glow-b: rgba(14, 165, 233, 0.1);
@@ -51,25 +53,25 @@
 }
 
 [data-theme='dark'] {
-	--bg: #0b1020;
-	--surface: #ffffff;
-	--surface-2: #f5f7ff;
-	--surface-3: #eef2ff;
-	--card: #ffffff;
-	--border: #dfe7f5;
-	--text: #e5edf8;
-	--text-muted: #a5b4ce;
-	--text-heading: #f3f4f6;
-	--panel-text: #1f2937;
-	--panel-muted: #58657a;
-	--panel-heading: #111827;
-	--primary-bg: rgb(99 102 241 / 0.12);
+	--bg: #0a0a0b;
+	--surface: #17171a;
+	--surface-2: #1c1c20;
+	--surface-3: #26262b;
+	--card: #17171a;
+	--border: rgb(255 255 255 / 0.08);
+	--text: #e4e4e7;
+	--text-muted: #a1a1aa;
+	--text-heading: #fafafa;
+	--panel-text: #e4e4e7;
+	--panel-muted: #a1a1aa;
+	--panel-heading: #fafafa;
+	--primary-bg: rgb(129 140 248 / 0.16);
 	--accent: #4f46e5;
 	--accent-soft: rgba(79, 70, 229, 0.12);
-	--shadow-color: rgb(15 23 42 / 0.08);
-	--bg-glow-a: rgba(99, 102, 241, 0.12);
-	--bg-glow-b: rgba(14, 165, 233, 0.08);
-	--bg-glow-c: rgba(168, 85, 247, 0.1);
+	--shadow-color: rgb(0 0 0 / 0.4);
+	--bg-glow-a: rgb(255 255 255 / 0.05);
+	--bg-glow-b: rgb(255 255 255 / 0.035);
+	--bg-glow-c: rgb(255 255 255 / 0.045);
 
 	color-scheme: dark;
 }
@@ -82,6 +84,7 @@
 
 html {
 	scroll-behavior: smooth;
+	scrollbar-gutter: stable;
 }
 
 html,
@@ -97,6 +100,19 @@ body {
 	transition:
 		background-color 0.25s ease,
 		color 0.25s ease;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+input,
+textarea,
+select,
+[contenteditable='true'],
+[contenteditable=''],
+.select-text,
+[data-selectable] {
+	user-select: text;
+	-webkit-user-select: text;
 }
 
 #root {
@@ -160,4 +176,239 @@ button {
 	background: var(--card);
 	border: 1px solid var(--border);
 	color: var(--text);
+}
+
+[data-theme='dark'] .theme-accent {
+	color: #b3baff;
+	border-color: rgb(129 140 248 / 0.4);
+}
+
+[data-theme='dark'] .theme-accent:hover {
+	color: #c7cbff;
+	border-color: rgb(129 140 248 / 0.55);
+	background-color: rgb(129 140 248 / 0.22);
+}
+
+[data-theme='dark'] .theme-accent-hover:hover {
+	color: #b3baff;
+	border-color: rgb(129 140 248 / 0.4);
+	background-color: rgb(129 140 248 / 0.16);
+}
+
+[data-theme='dark'] .theme-result {
+	border-color: rgb(129 140 248 / 0.35);
+	background-color: rgb(129 140 248 / 0.12);
+}
+
+[data-theme='dark'] .theme-badge-amber {
+	background-color: rgb(245 158 11 / 0.28);
+	color: #fde68a;
+}
+
+[data-theme='dark'] .theme-badge-cyan {
+	background-color: rgb(34 211 238 / 0.25);
+	color: #a5f3fc;
+}
+
+[data-theme='dark'] .theme-badge-fuchsia {
+	background-color: rgb(232 121 249 / 0.25);
+	color: #f5d0fe;
+}
+
+[data-theme='dark'] .theme-badge-emerald {
+	background-color: rgb(52 211 153 / 0.25);
+	color: #a7f3d0;
+}
+
+[data-theme='dark'] .theme-badge-blue {
+	background-color: rgb(96 165 250 / 0.28);
+	color: #bfdbfe;
+}
+
+[data-theme='dark'] .theme-badge-purple {
+	background-color: rgb(192 132 252 / 0.28);
+	color: #ddd6fe;
+}
+
+[data-theme='dark'] .theme-badge-red {
+	background-color: rgb(248 113 113 / 0.25);
+	color: #fecaca;
+}
+
+@keyframes fade-slide-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.animate-enter {
+	animation: fade-slide-in 0.3s ease-out both;
+}
+
+@keyframes shimmer {
+	from {
+		background-position: 200% 0;
+	}
+	to {
+		background-position: -200% 0;
+	}
+}
+
+.skeleton {
+	background: linear-gradient(
+		90deg,
+		var(--surface-2) 25%,
+		var(--surface-3) 50%,
+		var(--surface-2) 75%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.animate-enter,
+	.skeleton {
+		animation: none;
+	}
+}
+
+@keyframes page-hide {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+}
+
+@keyframes page-show {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.page-hide {
+	animation: page-hide 0.2s ease-in both;
+}
+
+.page-show {
+	animation: page-show 0.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.page-hide,
+	.page-show {
+		animation: none;
+	}
+}
+
+.filter-search-input:focus-visible {
+	outline: none;
+}
+
+.checkbox {
+	display: inline-grid;
+	flex-shrink: 0;
+	place-items: center;
+	border-radius: 0.45rem;
+	border: 1.5px solid var(--border);
+	background: var(--surface);
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.checkbox-sm {
+	width: 1rem;
+	height: 1rem;
+}
+
+.checkbox-md {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.checkbox svg {
+	width: 70%;
+	height: 70%;
+	color: #fff;
+	opacity: 0;
+	transform: scale(0.4);
+	transition:
+		opacity 0.16s ease,
+		transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.checkbox[data-checked='true'] {
+	background: #171717;
+	border-color: #171717;
+	animation: checkbox-pop 0.25s ease;
+}
+
+.checkbox[data-checked='true'] svg {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.checkbox-input:focus-visible + .checkbox {
+	outline: 2px solid var(--text-heading);
+	outline-offset: 2px;
+}
+
+[data-theme='dark'] .checkbox[data-checked='true'] {
+	background: #f3f4f6;
+	border-color: #f3f4f6;
+}
+
+[data-theme='dark'] .checkbox[data-checked='true'] svg {
+	color: #111827;
+}
+
+@keyframes row-spotlight {
+	0% {
+		box-shadow:
+			inset 0 0 0 3px rgb(99 102 241 / 0),
+			inset 0 0 28px rgb(99 102 241 / 0);
+		background-color: transparent;
+	}
+	15% {
+		box-shadow:
+			inset 0 0 0 3px rgb(99 102 241 / 1),
+			inset 0 0 28px rgb(99 102 241 / 0.45);
+		background-color: rgb(99 102 241 / 0.08);
+	}
+	100% {
+		box-shadow:
+			inset 0 0 0 3px rgb(99 102 241 / 0),
+			inset 0 0 28px rgb(99 102 241 / 0);
+		background-color: transparent;
+	}
+}
+
+.row-spotlight {
+	animation: row-spotlight 1.8s ease-in-out 1;
+}
+
+@keyframes checkbox-pop {
+	0% {
+		transform: scale(0.7);
+	}
+	55% {
+		transform: scale(1.12);
+	}
+	100% {
+		transform: scale(1);
+	}
 }

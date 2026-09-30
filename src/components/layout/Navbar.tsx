@@ -2,15 +2,16 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 const NAV_PAGES = [
-	{ id: 'playground', label: 'Playground', path: '/playground' },
-	{ id: 'how-it-works', label: "How it's works", path: '/how-it-works' },
-	{ id: 'about', label: 'About us', path: '/about' },
+	{ id: 'home', label: 'หน้าหลัก', path: '/' },
+	{ id: 'playground', label: 'ทดลองใช้งาน', path: '/playground' },
+	{ id: 'how-it-works', label: 'วิธีการทำงาน', path: '/how-it-works' },
+	{ id: 'about', label: 'เกี่ยวกับเรา', path: '/about' },
 ] as const;
 
 export type PageId = (typeof NAV_PAGES)[number]['id'];
 
 function pageFromPath(pathname: string): PageId {
-	return NAV_PAGES.find((page) => page.path === pathname)?.id ?? 'playground';
+	return NAV_PAGES.find((page) => page.path === pathname)?.id ?? 'home';
 }
 
 type NavbarProps = {
@@ -38,10 +39,9 @@ export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
 	return (
 		<header className='sticky top-0 z-(--z-nav) flex justify-center bg-transparent px-4 pt-4'>
 			<nav
-				aria-label='Primary'
-				className='relative flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-background/85 p-1.5 shadow-(--shadow-sm) backdrop-blur'
+				aria-label='การนำทางหลัก'
+				className='relative flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-background/85 p-1.5 shadow-(--shadow-sm) backdrop-blur select-none'
 			>
-				{/* Sliding active background */}
 				<span
 					aria-hidden='true'
 					style={{ left: pill.left, width: pill.width }}
@@ -72,12 +72,11 @@ export default function Navbar({ theme, onThemeToggle }: NavbarProps) {
 
 				<span aria-hidden='true' className='mx-1 h-5 w-px shrink-0 bg-border' />
 
-				{/* Theme toggle */}
 				<button
 					type='button'
 					onClick={onThemeToggle}
-					aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-					title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+					aria-label={`เปลี่ยนเป็นธีม${theme === 'dark' ? 'สว่าง' : 'มืด'}`}
+					title={`เปลี่ยนเป็นธีม${theme === 'dark' ? 'สว่าง' : 'มืด'}`}
 					className='relative z-10 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-heading transition hover:bg-surface-2'
 				>
 					{theme === 'dark' ? (
