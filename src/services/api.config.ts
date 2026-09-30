@@ -1,4 +1,4 @@
-export const RAW_URL = import.meta.env.VITE_API_BASE_URL;
+export const RAW_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 export const API_BASE_URL = `${RAW_URL}/api/v1`;
 
 export const apiClient = async <T>(
