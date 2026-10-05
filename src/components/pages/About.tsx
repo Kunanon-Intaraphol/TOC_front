@@ -1,4 +1,16 @@
 import { useEffect, useState } from 'react';
+import t1 from '../../assets/p1-12/t1.jpg';
+import t10 from '../../assets/p1-12/t10.jpg';
+import t11 from '../../assets/p1-12/t11.jpg';
+import t12 from '../../assets/p1-12/t12.png';
+import t2 from '../../assets/p1-12/t2.jpg';
+import t3 from '../../assets/p1-12/t3.jpg';
+import t4 from '../../assets/p1-12/t4.jpg';
+import t5 from '../../assets/p1-12/t5.jpg';
+import t6 from '../../assets/p1-12/t6.jpg';
+import t7 from '../../assets/p1-12/t7.jpg';
+import t8 from '../../assets/p1-12/t8.jpg';
+import t9 from '../../assets/p1-12/t9.jpg';
 
 type TeamMember = {
 	id: number;
@@ -10,75 +22,75 @@ type TeamMember = {
 const TEAM_MEMBERS: TeamMember[] = [
 	{
 		id: 1,
-		name: 'Tachin Sangrat',
-		role: 'Frontend',
-		img: 'https://i.pravatar.cc/600?img=11',
-	},
-	{
-		id: 2,
-		name: 'Andrew Wilson',
-		role: 'Backend',
-		img: 'https://i.pravatar.cc/600?img=12',
+		name: 'ณัฐชนน ชัยสิทธิฤกษ์กุล',
+		role: 'Tech Lead',
+		img: t1,
 	},
 	{
 		id: 3,
-		name: 'Fernando Ruiz',
-		role: 'DevOps',
-		img: 'https://i.pravatar.cc/600?img=13',
-	},
-	{
-		id: 4,
-		name: 'Sarah Smith',
-		role: 'UX/UI',
-		img: 'https://i.pravatar.cc/600?img=47',
+		name: 'คุณานนต์ อินทรพล',
+		role: 'Frontend',
+		img: t3,
 	},
 	{
 		id: 5,
-		name: 'Sebastian Cole',
-		role: 'Tech Lead',
-		img: 'https://i.pravatar.cc/600?img=15',
+		name: 'ติณณ์ สูงเมฆ',
+		role: 'Frontend',
+		img: t5,
 	},
 	{
 		id: 6,
-		name: 'Gerald Hines',
-		role: 'QA Eng',
-		img: 'https://i.pravatar.cc/600?img=16',
-	},
-	{
-		id: 7,
-		name: 'Julian Bates',
-		role: 'Data Sci',
-		img: 'https://i.pravatar.cc/600?img=17',
-	},
-	{
-		id: 8,
-		name: 'Durrent M.',
-		role: 'Security',
-		img: 'https://i.pravatar.cc/600?img=68',
-	},
-	{
-		id: 9,
-		name: 'Rosario Diaz',
-		role: 'Product',
-		img: 'https://i.pravatar.cc/600?img=19',
-	},
-	{
-		id: 10,
-		name: 'Kim Lee',
-		role: 'Mobile Dev',
-		img: 'https://i.pravatar.cc/600?img=20',
-	},
-	{
-		id: 11,
-		name: 'Lucio V.',
-		role: 'SysAdmin',
-		img: 'https://i.pravatar.cc/600?img=33',
+		name: 'เตชินท์ แสงรัตน์',
+		role: 'Frontend',
+		img: t6,
 	},
 	{
 		id: 12,
-		name: 'Maya Patel',
-		role: 'Scrum Master',
-		img: 'https://i.pravatar.cc/600?img=5',
+		name: 'จักรภัทร แก้วทอง',
+		role: 'Frontend',
+		img: t12,
+	},
+	{
+		id: 7,
+		name: 'พนธกร เกษร',
+		role: 'Backend',
+		img: t7,
+	},
+	{
+		id: 8,
+		name: 'บุณวรัตถ์ ประสารพันธุ์',
+		role: 'Backend',
+		img: t8,
+	},
+	{
+		id: 10,
+		name: 'ธชาดล วงค์พนิตกฤต',
+		role: 'Backend',
+		img: t10,
+	},
+	{
+		id: 11,
+		name: 'ปริญญา ขำเหม',
+		role: 'Backend',
+		img: t11,
+	},
+	{
+		id: 2,
+		name: 'คม วานิชกิตติกูล',
+		role: 'DevOps',
+		img: t2,
+	},
+	{
+		id: 4,
+		name: 'ธนดล แกมทอง',
+		role: 'QA Engineer',
+		img: t4,
+	},
+	{
+		id: 9,
+		name: 'ชวัลวิทย์ ใช้เทียมวงศ์',
+		role: 'QA Engineer',
+		img: t9,
 	},
 ];
 
